@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: demo
+      MYSQL_DATABASE: company
+      MYSQL_USER: hradmin
+      MYSQL_PASSWORD: hrpass
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    command: --default-time-zone='Asia/Seoul' --lower_case_table_names=1
+
+  python:
+    image: streamlit/streamlit:latest
+    container_name: web
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    command: ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    ports:
+      - "8501:8501"
+    network_mode: host
