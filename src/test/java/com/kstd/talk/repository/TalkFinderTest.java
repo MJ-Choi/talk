@@ -90,14 +90,16 @@ class TalkFinderTest {
 
         String baseDtm = "2025-01-01 11:00";
         LocalDateTime baseDateTime = DateUtil.strToDt(baseDtm);
-        LocalDateTime minDay = baseDateTime.minusDays(3); // 2024-12-29 11:00 ~ 2025-01-01 11:00
+        LocalDateTime minDay = baseDateTime.minusDays(3); // 2024-12-29 11:00 ~ 2025-01-31 11:00
+        // T00001 2025-01-05 10:00 - 1명(12/29) >조회 가능
+        // T00002 2025-01-03 10:00 - 1명(12/28) >기간 만료
+        // T00003 2024-12-31 10:00 - 2명(12/30, 12/31) > 조회 가능
         List<TalkBaseDto> lists = talkFinder.getPopularLists(minDay, baseDateTime, 0, 3);
         log.info("lists:({}): {}", lists.size(), lists);
         Assertions.assertNotNull(lists);
         Assertions.assertEquals(2, lists.size());
         Assertions.assertEquals(2, lists.get(0).getParticipants());
         Assertions.assertEquals(1, lists.get(1).getParticipants());
-
     }
 
     @Test
@@ -120,27 +122,27 @@ class TalkFinderTest {
         // T00003 = 2
         factory.insert(qTalkMem)
                 .columns(
-                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm
+                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm, qTalkMem.updateDtm
                 )
                 .values(
-                        "T00003", "test1", TalkState.REGISTERATION, DateUtil.strToDt("2024-12-30 11:00")
+                        "T00003", "test1", TalkState.REGISTERATION, DateUtil.strToDt("2024-12-30 11:00"), DateUtil.strToDt("2024-12-30 11:00")
                 )
                 .execute();
         factory.insert(qTalkMem)
                 .columns(
-                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm
+                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm, qTalkMem.updateDtm
                 )
                 .values(
-                        "T00003", "test2", TalkState.CANCEL, DateUtil.strToDt("2024-12-30 11:00")
+                        "T00003", "test2", TalkState.CANCEL, DateUtil.strToDt("2024-12-30 11:00"), DateUtil.strToDt("2024-12-30 11:00")
                 )
                 .execute();
 
         factory.insert(qTalkMem)
                 .columns(
-                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm
+                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm, qTalkMem.updateDtm
                 )
                 .values(
-                        "T00003", "test3", TalkState.REGISTERATION, DateUtil.strToDt("2024-12-31 11:00")
+                        "T00003", "test3", TalkState.REGISTERATION, DateUtil.strToDt("2024-12-31 11:00"), DateUtil.strToDt("2024-12-31 11:00")
                 )
                 .execute();
 
@@ -154,7 +156,7 @@ class TalkFinderTest {
                 )
                 .execute();
 
-        // T00001 - 0
+        // T00001
         factory.insert(qTalkMem)
                 .columns(
                         qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm, qTalkMem.updateDtm

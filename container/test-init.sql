@@ -61,3 +61,13 @@ DROP USER IF EXISTS 'hradmin'@'%';
 CREATE USER 'hradmin'@'%' IDENTIFIED BY 'hrpass';
 GRANT ALL PRIVILEGES ON company.* TO 'hradmin'@'%';
 FLUSH PRIVILEGES;
+
+-- 기본 강연데이터 생성
+INSERT INTO talk_list (place, seat, speaker, start_dtm, talk_desc)
+VALUES ('test-place', 5, 'test-speaker', '2025-01-05 10:00:00', 'test01');
+
+INSERT INTO talk_list (place, seat, speaker, start_dtm, talk_desc)
+VALUES ('test-place', 10, 'test-speaker', '2025-01-03 10:00:00', 'test02');
+
+INSERT INTO talk_list (place, seat, speaker, start_dtm, talk_desc)
+VALUES ('test-place', 3, 'test-speaker', '2024-12-31 10:00:00', 'test03');

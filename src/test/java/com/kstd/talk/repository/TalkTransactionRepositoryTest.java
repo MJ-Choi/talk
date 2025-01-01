@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.Rollback;
 
 /**
  * 이 테스트는 init.sql 로 초기화 된 상태에서만 정상동작
@@ -31,8 +32,6 @@ class TalkTransactionRepositoryTest {
     private TalkFinder talkFinder;
     @Autowired
     private TalkMemFinder talkMemFinder;
-    @Autowired
-    private EntityManager em;
 
     @Test
     @DisplayName("강연 등록")

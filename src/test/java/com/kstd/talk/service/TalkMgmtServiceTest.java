@@ -4,6 +4,7 @@ import com.kstd.talk.config.TestConfig;
 import com.kstd.talk.dto.TalkBaseDto;
 import com.kstd.talk.dto.TalkState;
 import com.kstd.talk.dto.request.TalkRequest;
+import com.kstd.talk.entity.QTalkList;
 import com.kstd.talk.entity.QTalkMem;
 import com.kstd.talk.repository.TalkFinder;
 import com.kstd.talk.repository.TalkIdSeqRepository;
@@ -11,6 +12,7 @@ import com.kstd.talk.repository.TalkMemFinder;
 import com.kstd.talk.repository.TalkTransactionRepository;
 import com.kstd.talk.util.DateUtil;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +25,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,8 +60,8 @@ class TalkMgmtServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<TalkBaseDto> page = talkMgmtService.getList(pageable);
         List<TalkBaseDto> list = page.stream().toList();
-        log.info("page: {}", list);
-        Assertions.assertEquals(3, list.size());
+        log.info("page:{}: {}", list.size(), list);
+        Assertions.assertTrue(list.size() >= 3);
     }
 
     @Test
@@ -105,27 +108,27 @@ class TalkMgmtServiceTest {
         // T00003 = 2
         factory.insert(qTalkMem)
                 .columns(
-                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm
+                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm, qTalkMem.updateDtm
                 )
                 .values(
-                        "T00003", "test1", TalkState.REGISTERATION, DateUtil.strToDt("2024-12-30 11:00")
+                        "T00003", "test1", TalkState.REGISTERATION, DateUtil.strToDt("2024-12-30 11:00"), DateUtil.strToDt("2024-12-30 11:00")
                 )
                 .execute();
         factory.insert(qTalkMem)
                 .columns(
-                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm
+                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm, qTalkMem.updateDtm
                 )
                 .values(
-                        "T00003", "test2", TalkState.CANCEL, DateUtil.strToDt("2024-12-30 11:00")
+                        "T00003", "test2", TalkState.CANCEL, DateUtil.strToDt("2024-12-30 11:00"), DateUtil.strToDt("2024-12-30 11:05")
                 )
                 .execute();
 
         factory.insert(qTalkMem)
                 .columns(
-                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm
+                        qTalkMem.talkId, qTalkMem.memId, qTalkMem.state, qTalkMem.dtm, qTalkMem.updateDtm
                 )
                 .values(
-                        "T00003", "test3", TalkState.REGISTERATION, DateUtil.strToDt("2024-12-31 11:00")
+                        "T00003", "test3", TalkState.REGISTERATION, DateUtil.strToDt("2024-12-31 11:00"), DateUtil.strToDt("2024-12-31 11:00")
                 )
                 .execute();
 

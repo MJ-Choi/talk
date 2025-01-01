@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  mariadb:
+  appdb:
     image: mariadb:latest
     container_name: mariadb
     environment:
@@ -13,6 +13,19 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
+    command: --default-time-zone='Asia/Seoul' --lower_case_table_names=1
+  testdb:
+    image: mariadb:latest
+    container_name: testdb
+    environment:
+      MYSQL_ROOT_PASSWORD: demo
+      MYSQL_DATABASE: company
+      MYSQL_USER: hradmin
+      MYSQL_PASSWORD: hrpass
+    volumes:
+      - ./test-init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3307:3306"
     command: --default-time-zone='Asia/Seoul' --lower_case_table_names=1
 
   python:
